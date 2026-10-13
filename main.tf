@@ -15,7 +15,16 @@ terraform {
       source  = "hashicorp/time"
       version = "~> 0.11"
     }
+    databricks = {
+      source  = "databricks/databricks"
+      version = "~> 1.50"
+    }
   }
+}
+
+provider "databricks" {
+  host  = var.databricks_host
+  token = var.databricks_token
 }
 
 resource "random_pet" "this" {
