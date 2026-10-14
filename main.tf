@@ -22,10 +22,7 @@ terraform {
   }
 }
 
-provider "databricks" {
-  host  = var.databricks_host
-  token = var.databricks_token
-}
+provider "databricks" {}
 
 resource "random_pet" "this" {
   length = var.pet_length
@@ -52,3 +49,23 @@ resource "null_resource" "hello" {
     command = "echo Hello from IACM, ${random_pet.this.id}!"
   }
 }
+
+resource "databricks_directory" "demo" {
+  path = "/Shared/terraform-demo"
+}
+
+# A secret scope
+resource "databricks_secret_scope" "demo" {
+  name = "terraform-demo"
+}
+
+resource "databricks_notebook" "hello" {
+  path     = "${databricks_directory.demo.path}/hello"
+  language = "PYTHON"
+  content_base64 = base64encode(<<-EOT
+    # Databricks notebook source
+    print("Hello from Terraform")
+  EOT
+  )
+}
+
